@@ -11,13 +11,14 @@ int loadBooks(std::vector<book> &books, const char* filename)
 {
 	fstream myfile;
 	string line;
+	string test;
 	try{
 		myfile.open(filename);
 		if(myfile.is_open()){
-			if(myfile.eof()){
+			if(myfile.peek() == std::ifstream::traits_type::eof()){
 				return NO_BOOKS_IN_LIBRARY;
 			}
-			while(!myfile.eof()){
+			while(myfile.peek()!=EOF){
 				getline(myfile, line);
 				string token;
 					stringstream ss(line);
@@ -25,15 +26,19 @@ int loadBooks(std::vector<book> &books, const char* filename)
 					int tracker = 0;
 					while(getline(ss, token, ',')){
 						info[tracker] = token;
+						tracker++;
 					}
 					book bok;
 					bok.book_id = stoi(info[0]);
 					bok.title = info[1];
 					bok.author = info[2];
-
+					books.push_back(bok);
 
 			}
 		}
+		else{
+			return COULD_NOT_OPEN_FILE;
+					}
 	}catch(exception& e){
 		return COULD_NOT_OPEN_FILE;
 	}
