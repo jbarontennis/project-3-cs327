@@ -52,6 +52,23 @@ int loadBooks(std::vector<book> &books, const char* filename)
  * */
 int saveBooks(std::vector<book> &books, const char* filename)
 {
+	ofstream myfile;
+	try{
+	myfile.open(filename);
+	if(myfile.is_open()){
+		if(books.size() == 0){
+			return NO_BOOKS_IN_LIBRARY;
+		}
+		for(book tmp:books){
+			myfile<<tmp.book_id + "," + tmp.title + "," + tmp.author + "," + "1,-2" + "/n";
+		}
+	}
+	else{
+		return COULD_NOT_OPEN_FILE;
+	}
+	}catch(exception& e){
+		return COULD_NOT_OPEN_FILE;
+	}
 	return SUCCESS;
 }
 
@@ -62,6 +79,7 @@ int saveBooks(std::vector<book> &books, const char* filename)
  * */
 int loadPatrons(std::vector<patron> &patrons, const char* filename)
 {
+
 	return SUCCESS;
 }
 
