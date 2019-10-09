@@ -79,7 +79,39 @@ int saveBooks(std::vector<book> &books, const char* filename)
  * */
 int loadPatrons(std::vector<patron> &patrons, const char* filename)
 {
+	fstream myfile;
+		string line;
+		string test;
+		try{
+			myfile.open(filename);
+			if(myfile.is_open()){
+				if(myfile.peek() == std::ifstream::traits_type::eof()){
+					return NO_PATRONS_IN_LIBRARY;
+				}
+				while(myfile.peek()!=EOF){
+					getline(myfile, line);
+					string token;
+						stringstream ss(line);
+						string info[5];
+						int tracker = 0;
+						while(getline(ss, token, ',')){
+							info[tracker] = token;
+							tracker++;
+						}
+						patron bok;
+						bok.patron_id = stoi(info[0]);
+						bok.name = info[1];
+						bok.number_books_checked_out = stoi(info[2]);
+						patrons.push_back(bok);
 
+				}
+			}
+			else{
+				return COULD_NOT_OPEN_FILE;
+						}
+		}catch(exception& e){
+			return COULD_NOT_OPEN_FILE;
+		}
 	return SUCCESS;
 }
 
@@ -90,5 +122,22 @@ int loadPatrons(std::vector<patron> &patrons, const char* filename)
  * */
 int savePatrons(std::vector<patron> &patrons, const char* filename)
 {
+	ofstream myfile;
+		try{
+		myfile.open(filename);
+		if(myfile.is_open()){
+			if(patrons.size() == 0){
+				return NO_BOOKS_IN_LIBRARY;
+			}
+			for(patron tmp:patrons){
+				myfile<<tmp.patron_id + "," + tmp.name + "," + to_string(tmp.number_books_checked_out) + "/n";
+			}
+		}
+		else{
+			return COULD_NOT_OPEN_FILE;
+		}
+		}catch(exception& e){
+			return COULD_NOT_OPEN_FILE;
+		}
 	return SUCCESS;
 }

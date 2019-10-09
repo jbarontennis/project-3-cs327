@@ -42,6 +42,8 @@ void reloadAllData(){
  *         TOO_MANY_OUT patron has the max number of books allowed checked out
  */
 int checkout(int bookid, int patronid){
+	std::vector<book> books;
+	loadBooks(books,"bookfile.txt");
 	return SUCCESS;
 }
 
