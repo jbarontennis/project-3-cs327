@@ -25,6 +25,9 @@ int loadBooks(std::vector<book> &books, const char* filename)
 					string info[5];
 					int tracker = 0;
 					while(getline(ss, token, ',')){
+						if(tracker>4){
+							return BOOK_NOT_IN_COLLECTION;
+						}
 						info[tracker] = token;
 						tracker++;
 					}
@@ -105,6 +108,9 @@ int loadPatrons(std::vector<patron> &patrons, const char* filename)
 						string info[5];
 						int tracker = 0;
 						while(getline(ss, token, ',')){
+							if(tracker>4){
+								return PATRON_NOT_ENROLLED;
+							}
 							info[tracker] = token;
 							tracker++;
 						}
