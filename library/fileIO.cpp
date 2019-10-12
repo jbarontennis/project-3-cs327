@@ -43,7 +43,7 @@ books.clear();
 					} else if (info[3] == "2") {
 						bok.state = OUT;
 					}
-					bok.loaned_to_patron_id = stoi(info[3]);
+					bok.loaned_to_patron_id = stoi(info[4]);
 					books.push_back(bok);
 
 			}
