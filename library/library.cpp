@@ -12,13 +12,15 @@ using namespace std;
 //NOTE: please ensure patron and book data are loaded from disk before calling the following
 //NOTE: also make sure you save patron and book data to disk any time you make a change to them
 //NOTE: for files where data is stored see constants.h BOOKFILE and PATRONFILE
-
+std::vector<book> books;
+std::vector<patron> patrons;
 /*
  * clear books and patrons containers
  * then reload them from disk 
  */
 void reloadAllData(){
-
+	loadPatrons(patrons, BOOKFILE.c_str());
+	loadBooks(books, BOOKFILE.c_str());
 }
 
 /* checkout a book to a patron
@@ -42,8 +44,37 @@ void reloadAllData(){
  *         TOO_MANY_OUT patron has the max number of books allowed checked out
  */
 int checkout(int bookid, int patronid){
-	std::vector<book> books;
-	loadBooks(books,"bookfile.txt");
+	int bok = -5;
+	int patrn = -5;
+	bool patronIsValid = false;
+	bool bookIsValid = false;
+	for(unsigned int i = 0;i<books.size();i++){
+		if(bookid == books[i].book_id){
+			bok = i;
+			bookIsValid = true;
+		}
+	}
+	for(unsigned int i = 0;i<patrons.size();i++){
+		if(patronid == patrons[i].patron_id){
+			patrn = i;
+			patronIsValid = true;
+		}
+	}
+	if(!patronIsValid){
+		return PATRON_NOT_ENROLLED;
+	}
+	if(!bookIsValid){
+		return BOOK_NOT_IN_COLLECTION;
+	}
+	if(patrons[patrn].number_books_checked_out >= MAX_BOOKS_ALLOWED_OUT){
+		return TOO_MANY_OUT;
+	}else{
+		patrons[patrn].number_books_checked_out++;
+	}
+	books[bok].loaned_to_patron_id = patronid;
+	books[bok].state = OUT;
+	saveBooks(books, BOOKFILE.c_str());
+	savePatrons(patrons, PATRONFILE.c_str());
 	return SUCCESS;
 }
 
@@ -73,7 +104,14 @@ int checkin(int bookid){
  *    the patron_id of the person added
  */
 int enroll(std::string &name){
-	return 0;
+	reloadAllData();
+	patron pat;
+	pat.name = name;
+	pat.number_books_checked_out = 0;
+	pat.patron_id = patrons.size();
+	patrons.push_back(pat);
+	savePatrons(patrons, PATRONFILE.c_str());
+	return pat.patron_id;
 }
 
 /*
@@ -82,7 +120,7 @@ int enroll(std::string &name){
  * 
  */
 int numbBooks(){
-	return 0;
+	return books.size();
 }
 
 /*
@@ -90,7 +128,7 @@ int numbBooks(){
  * (ie. if 3 patrons returns 3)
  */
 int numbPatrons(){
-	return 0;
+	return patrons.size();
 }
 
 /*the number of books patron has checked out

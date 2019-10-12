@@ -13,7 +13,7 @@ int loadBooks(std::vector<book> &books, const char* filename)
 	string line;
 	string test;
 	try{
-		myfile.open(filename);
+		myfile.open(filename,ios::in);
 		if(myfile.is_open()){
 			if(myfile.peek() == std::ifstream::traits_type::eof()){
 				return NO_BOOKS_IN_LIBRARY;
@@ -32,6 +32,14 @@ int loadBooks(std::vector<book> &books, const char* filename)
 					bok.book_id = stoi(info[0]);
 					bok.title = info[1];
 					bok.author = info[2];
+					if (info[3] == "0") {
+						bok.state = UNKNOWN;
+					} else if (info[3] == "1") {
+						bok.state = IN;
+					} else if (info[3] == "2") {
+						bok.state = OUT;
+					}
+					bok.loaned_to_patron_id = stoi(info[3]);
 					books.push_back(bok);
 
 			}
@@ -42,6 +50,7 @@ int loadBooks(std::vector<book> &books, const char* filename)
 	}catch(exception& e){
 		return COULD_NOT_OPEN_FILE;
 	}
+	myfile.close();
 	return SUCCESS;
 }
 
@@ -54,7 +63,7 @@ int saveBooks(std::vector<book> &books, const char* filename)
 {
 	ofstream myfile;
 	try{
-	myfile.open(filename);
+	myfile.open(filename,ios::trunc);
 	if(myfile.is_open()){
 		if(books.size() == 0){
 			return NO_BOOKS_IN_LIBRARY;
@@ -69,6 +78,7 @@ int saveBooks(std::vector<book> &books, const char* filename)
 	}catch(exception& e){
 		return COULD_NOT_OPEN_FILE;
 	}
+	myfile.close();
 	return SUCCESS;
 }
 
@@ -83,7 +93,7 @@ int loadPatrons(std::vector<patron> &patrons, const char* filename)
 		string line;
 		string test;
 		try{
-			myfile.open(filename);
+			myfile.open(filename,ios::in);
 			if(myfile.is_open()){
 				if(myfile.peek() == std::ifstream::traits_type::eof()){
 					return NO_PATRONS_IN_LIBRARY;
@@ -112,6 +122,7 @@ int loadPatrons(std::vector<patron> &patrons, const char* filename)
 		}catch(exception& e){
 			return COULD_NOT_OPEN_FILE;
 		}
+		myfile.close();
 	return SUCCESS;
 }
 
@@ -124,7 +135,7 @@ int savePatrons(std::vector<patron> &patrons, const char* filename)
 {
 	ofstream myfile;
 		try{
-		myfile.open(filename);
+		myfile.open(filename,ios::trunc);
 		if(myfile.is_open()){
 			if(patrons.size() == 0){
 				return NO_BOOKS_IN_LIBRARY;
@@ -139,5 +150,6 @@ int savePatrons(std::vector<patron> &patrons, const char* filename)
 		}catch(exception& e){
 			return COULD_NOT_OPEN_FILE;
 		}
+		myfile.close();
 	return SUCCESS;
 }
